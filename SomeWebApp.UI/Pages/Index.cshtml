@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Collections
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -24,4 +25,9 @@
         </ul>
     </div>
 </div>
+@foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
+{
+    <span>@e.Key - @e.Value</span>
+    <br />
+}
 
