@@ -1,0 +1,27 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div class="row text-center">
+    <div class="col-md-12"><h4>Backend API Call</h4></div>
+    <div class="col-md-12">
+        <ul>
+            @if (Model.Forecasts != null)
+            {
+                foreach (var forecast in Model.Forecasts)
+                {
+                    <li>@forecast.Date.ToString("dd/MM/yyyy") - @forecast.Summary</li>
+                }
+
+                if (Model.Forecasts.Count() == 0)
+                {
+                    <li>No forecast available</li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
