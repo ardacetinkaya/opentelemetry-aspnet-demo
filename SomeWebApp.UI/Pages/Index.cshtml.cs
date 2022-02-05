@@ -13,26 +13,26 @@ namespace SomeWebApp.UI.Pages
 
         public IEnumerable<WeatherForecast>? Forecasts { get; private set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger,IHttpClientFactory factory)
         {
             _logger = logger;
-            //_httpClientFactory = factory;
-            // _httpClient = _httpClientFactory.CreateClient("Main");
+            _httpClientFactory = factory;
+            _httpClient = _httpClientFactory.CreateClient("Main");
 
-            // _options = new JsonSerializerOptions
-            // {
-            //     PropertyNameCaseInsensitive = true
-            // };
+            _options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
         }
 
         public async Task OnGet()
         {
-            // var httpResponseMessage = await _httpClient.GetAsync("/WeatherForecast");
-            // if (httpResponseMessage.IsSuccessStatusCode)
-            // {
-            //     var contentString = await httpResponseMessage.Content.ReadAsStringAsync();
-            //     Forecasts =  JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(contentString,_options);
-            // }
+            var httpResponseMessage = await _httpClient.GetAsync("/WeatherForecast");
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var contentString = await httpResponseMessage.Content.ReadAsStringAsync();
+                Forecasts =  JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(contentString,_options);
+            }
         }
     }
 }

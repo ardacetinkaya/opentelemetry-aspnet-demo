@@ -54,8 +54,9 @@ jobs:
           inlineScript: |
             echo "Installing containerapp extension"
             az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
-            echo "Starting Deploying"
+            echo "Deploying..."
             az containerapp update -n container-api-01 -g k8s-demo-resources -i k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }} --registry-login-server k8simagesregistery.azurecr.io --registry-username  ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --debug
+            echo "Deployment completed."
 
       - name: Azure CLI script
         uses: azure/CLI@v1

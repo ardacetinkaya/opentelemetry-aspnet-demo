@@ -5,10 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<HeaderValidator>();
 
 
-// builder.Services.AddHttpClient("Main", httpClient =>
-// {
-//     httpClient.BaseAddress = new Uri("https://localhost:7044");
-// }).AddHttpMessageHandler<HeaderValidator>();
+builder.Services.AddHttpClient("Main", httpClient =>
+{
+    var address = Environment.GetEnvironmentVariable("API_SERVICE_FQDN")?? "localhost";
+    httpClient.BaseAddress = new Uri($"https://{address}");
+
+}).AddHttpMessageHandler<HeaderValidator>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
