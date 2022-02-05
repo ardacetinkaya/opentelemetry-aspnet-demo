@@ -1,0 +1,38 @@
+name: Docker Image for UI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Build and push image'
+      uses: azure/docker-login@v1
+      with:
+        login-server: k8simagesregistery.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build . --file SomeWebApp.UI/Dockerfile -t k8simagesregistery.azurecr.io/somewebapp-ui:${{ github.sha }}
+        docker push k8simagesregistery.azurecr.io/somewebapp-ui:${{ github.sha }}
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          az logout
+          az cache purge
+          az account clear
