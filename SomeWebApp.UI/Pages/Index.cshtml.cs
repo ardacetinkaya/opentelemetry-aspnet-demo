@@ -17,22 +17,22 @@ namespace SomeWebApp.UI.Pages
         {
             _logger = logger;
             _httpClientFactory = factory;
-            _httpClient = _httpClientFactory.CreateClient("Main");
+            // _httpClient = _httpClientFactory.CreateClient("Main");
 
-            _options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            // _options = new JsonSerializerOptions
+            // {
+            //     PropertyNameCaseInsensitive = true
+            // };
         }
 
         public async Task OnGet()
         {
-            var httpResponseMessage = await _httpClient.GetAsync("/WeatherForecast");
-            if (httpResponseMessage.IsSuccessStatusCode)
-            {
-                var contentString = await httpResponseMessage.Content.ReadAsStringAsync();
-                Forecasts =  JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(contentString,_options);
-            }
+            // var httpResponseMessage = await _httpClient.GetAsync("/WeatherForecast");
+            // if (httpResponseMessage.IsSuccessStatusCode)
+            // {
+            //     var contentString = await httpResponseMessage.Content.ReadAsStringAsync();
+            //     Forecasts =  JsonSerializer.Deserialize<IEnumerable<WeatherForecast>>(contentString,_options);
+            // }
         }
     }
 }
