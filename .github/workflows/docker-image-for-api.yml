@@ -28,3 +28,11 @@ jobs:
     - run: |
         docker build . --file SomeWebApp.API/Dockerfile -t k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }}
         docker push k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }}
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          az logout
+          az cache purge
+          az account clear
