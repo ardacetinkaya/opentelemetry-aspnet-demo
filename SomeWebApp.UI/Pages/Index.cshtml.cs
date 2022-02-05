@@ -13,10 +13,10 @@ namespace SomeWebApp.UI.Pages
 
         public IEnumerable<WeatherForecast>? Forecasts { get; private set; }
 
-        public IndexModel(ILogger<IndexModel> logger, IHttpClientFactory factory)
+        public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
-            _httpClientFactory = factory;
+            //_httpClientFactory = factory;
             // _httpClient = _httpClientFactory.CreateClient("Main");
 
             // _options = new JsonSerializerOptions
