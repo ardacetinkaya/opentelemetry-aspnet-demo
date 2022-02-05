@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [ main ]
 
+  workflow_dispatch:  
+
 jobs:
 
   build:
@@ -26,6 +28,7 @@ jobs:
     - run: |
         docker build . --file SomeWebApp.API/Dockerfile -t k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }}
         docker push k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }}
+
     - name: Azure CLI script
       uses: azure/CLI@v1
       with:
@@ -34,3 +37,31 @@ jobs:
           az logout
           az cache purge
           az account clear
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+      - name: Deploy to containerapp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            echo "Installing containerapp extension"
+            az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+            echo "Starting Deploying"
+            az containerapp update -n container-api-01 -g k8s-demo-resources -i k8simagesregistery.azurecr.io/somewebapp-api:${{ github.sha }} --registry-login-server k8simagesregistery.azurecr.io --registry-username  ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --debug
+
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.0.72
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
