@@ -36,7 +36,7 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "API_SERVICE_FQDN":"localhost:7044"
+                "API_SERVICE_FQDN": "localhost:7044"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

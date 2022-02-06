@@ -8,7 +8,7 @@ builder.Services.AddTransient<HeaderValidator>();
 builder.Services.AddHttpClient("Main", httpClient =>
 {
     var address = Environment.GetEnvironmentVariable("API_SERVICE_FQDN")?? "localhost";
-    httpClient.BaseAddress = new Uri($"https://{address}");
+    httpClient.BaseAddress = new Uri($"http://{address}");
 
 }).AddHttpMessageHandler<HeaderValidator>();
 
@@ -25,7 +25,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
