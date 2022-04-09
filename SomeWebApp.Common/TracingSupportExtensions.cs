@@ -84,6 +84,11 @@ public static class TracingSupportExtensions
 
     private static void AspNetCoreActivityEnrichment(Activity activity, string eventName, object rawObject)
     {
+        if((activity.GetTagItem("http.target") ?? "/") == "/")
+               activity.DisplayName="Home";
+        else
+            activity.DisplayName = activity.GetTagItem("http.target")?.ToString();
+
         SetTraceId(activity);
     }
 

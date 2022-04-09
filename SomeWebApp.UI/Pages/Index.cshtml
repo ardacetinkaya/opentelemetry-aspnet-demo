@@ -1,4 +1,4 @@
-﻿@page "{days=10}"
+﻿@page "{days?}"
 @using System.Collections
 @model IndexModel
 @{
@@ -44,10 +44,11 @@
         $.ajax({
             type: 'GET',
             data: { days: count},
-            url: '@Url.Page("index")',
+            url: window.location.protocol+"//"+window.location.hostname+":"+window.location.port+"/"+ count,
             success: function (result) {
-                console.log(result);
-                window.location = count;
+                document.open();
+                document.write(result);
+                document.close();
             }
     });
     }
