@@ -18,16 +18,24 @@ namespace SomeWebApp.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast/{number}")]
-        public IEnumerable<WeatherForecast> Get(int number=5)
+        [HttpGet(Name = "GetWeatherForecast/{fordays}")]
+        public IEnumerable<WeatherForecast> Get(int fordays=5)
         {
-            return Enumerable.Range(1, number).Select(index => new WeatherForecast
+            _logger.LogInformation("Weather Forecast for {days} days is requested.", fordays);
+            var tempratures =  Enumerable.Range(1, fordays).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = Random.Shared.Next(-55, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+
+            _logger.LogInformation("Weather Forecast for {days} days is calculated. Higher temprature is {temp} on {day}"
+            , fordays
+            , tempratures.Max(x => x.TemperatureC)
+            , tempratures.First(x => x.TemperatureC == tempratures.Max(y => y.TemperatureC)).Date.ToString("dd/MM/yyyy"));
+
+            return tempratures;
         }
     }
 }

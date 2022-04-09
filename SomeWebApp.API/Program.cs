@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTracingSupport(builder.Configuration);
+builder.Logging.AddLoggingSupport(builder.Configuration);
 
 
 var app = builder.Build();

@@ -1,8 +1,4 @@
 using SomeWebApp.UI;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Resources;
-using System.Reflection;
-using OpenTelemetry.Exporter;
 using SomeWebApp.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +17,7 @@ builder.Services.AddHttpClient("Main", httpClient =>
 builder.Services.AddRazorPages();
 
 builder.Services.AddTracingSupport(builder.Configuration);
-
+builder.Logging.AddLoggingSupport(builder.Configuration);
 
 var app = builder.Build();
 

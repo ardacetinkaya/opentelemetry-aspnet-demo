@@ -6,11 +6,11 @@
 }
 
 
-<div class="row text-center">
-    <div class="col-md-12">
+<div class="row">
+    <div class="col-md-12 text-center">
         <h4>Weather forecast</h4>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-5">
         <div>
             Days:@Model.Days
         </div>
@@ -21,7 +21,7 @@
             {
                 foreach (var forecast in Model.Forecasts)
                 {
-                    <li>@forecast.Date.ToString("dd/MM/yyyy") - @forecast.Summary</li>
+                    <li>@forecast.Date.ToString("dd/MM/yyyy") - <strong>@forecast.TemperatureC</strong> - @forecast.Summary</li>
                 }
 
                 if (Model.Forecasts.Count() == 0)

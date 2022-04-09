@@ -33,7 +33,7 @@ namespace SomeWebApp.UI.Pages
             Days = days ?? DEFAULT_DAY;
             var query = new Dictionary<string, string>()
             {
-                ["number"] = days ?? DEFAULT_DAY
+                ["fordays"] = days ?? DEFAULT_DAY
             };
 
             var uri = QueryHelpers.AddQueryString("/WeatherForecast", query);
