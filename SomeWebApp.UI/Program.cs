@@ -1,5 +1,5 @@
 using SomeWebApp.UI;
-using SomeWebApp.Common;
+using SomeWebApp.Telemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 

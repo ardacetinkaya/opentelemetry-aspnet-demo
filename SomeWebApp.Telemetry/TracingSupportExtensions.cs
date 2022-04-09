@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using Microsoft.AspNetCore.Http;
 
-namespace SomeWebApp.Common;
+namespace SomeWebApp.Telemetry;
 public static class TracingSupportExtensions
 {
     public static IServiceCollection AddTracingSupport(this IServiceCollection services, IConfiguration configuration)

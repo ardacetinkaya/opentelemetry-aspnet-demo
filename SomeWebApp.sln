@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeWebApp.UI", "SomeWebApp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeWebApp.API", "SomeWebApp.API\SomeWebApp.API.csproj", "{26F58DC5-96EC-45E1-A2E5-4389E3AD7997}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeWebApp.Common", "SomeWebApp.Common\SomeWebApp.Common.csproj", "{817BD2D7-2572-4D1A-AF5F-A33063BA9642}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeWebApp.Telemetry", "SomeWebApp.Telemetry\SomeWebApp.Telemetry.csproj", "{817BD2D7-2572-4D1A-AF5F-A33063BA9642}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

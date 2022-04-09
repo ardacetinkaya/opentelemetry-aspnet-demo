@@ -64,3 +64,17 @@ services:
     - port: 6000
       protocol: http
       name: http
+- name: database
+  image: postgres:9.6
+  env:
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_PASSWORD
+      value: password
+    - name: POSTGRES_DB
+      value: postgres
+  bindings:
+    - port: 5432
+  volumes:
+    - name: postgres-storage
+      target: /var/lib/postgresql/data
