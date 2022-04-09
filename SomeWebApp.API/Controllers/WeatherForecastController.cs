@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using SomeWebApp.API.Data;
 
 namespace SomeWebApp.API.Controllers
 {
@@ -12,15 +14,17 @@ namespace SomeWebApp.API.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly ForecastContext _context;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ForecastContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet(Name = "GetWeatherForecast/{fordays}")]
-        public IEnumerable<WeatherForecast> Get(int fordays=5)
+        public async Task<IEnumerable<WeatherForecast>> Get(int fordays=5)
         {
+            _logger.LogInformation(_context.Forecasts.Count().ToString()+" records in database");
             _logger.LogInformation("Weather Forecast for {days} days is requested.", fordays);
             var tempratures =  Enumerable.Range(1, fordays).Select(index => new WeatherForecast
             {
@@ -30,10 +34,21 @@ namespace SomeWebApp.API.Controllers
             })
             .ToArray();
 
-            _logger.LogInformation("Weather Forecast for {days} days is calculated. Higher temprature is {temp} on {day}"
+            _logger.LogInformation("Weather Forecast for {days} days is calculated. Higher temprature is {temp} on {day}."
             , fordays
             , tempratures.Max(x => x.TemperatureC)
             , tempratures.First(x => x.TemperatureC == tempratures.Max(y => y.TemperatureC)).Date.ToString("dd/MM/yyyy"));
+
+            _context.Add(new Forecast
+            {
+                TraceId = Activity.Current?.TraceId.ToString(),
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                MaxTemperatureC = tempratures.Max(x => x.TemperatureC),
+                MinTemperatureC = tempratures.Min(x => x.TemperatureC),
+                Summary = "Weather Forecast for " + fordays + " days is calculated. Higher temprature is " + tempratures.Max(x => x.TemperatureC) + " on " + tempratures.First(x => x.TemperatureC == tempratures.Max(y => y.TemperatureC)).Date.ToString("dd/MM/yyyy")
+            });
+
+            await _context.SaveChangesAsync();
 
             return tempratures;
         }

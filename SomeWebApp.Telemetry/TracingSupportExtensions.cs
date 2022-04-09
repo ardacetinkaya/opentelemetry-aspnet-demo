@@ -9,6 +9,8 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace SomeWebApp.Telemetry;
 public static class TracingSupportExtensions
@@ -29,7 +31,8 @@ public static class TracingSupportExtensions
                 {
                     options.RecordException = true;
                     options.Enrich = AspNetCoreActivityEnrichment;
-                });
+                })
+                .AddNpgsql();
 
             switch (telemetryConfiguration.Exporter)
             {
@@ -47,7 +50,7 @@ public static class TracingSupportExtensions
                     break;
             }
         });
-        
+
         return services;
     }
 
@@ -61,7 +64,7 @@ public static class TracingSupportExtensions
             options.IncludeFormattedMessage = true;
             options.IncludeScopes = true;
             options.ParseStateValues = true;
-            
+
 
             switch (telemetryConfiguration.Exporter)
             {
@@ -80,7 +83,7 @@ public static class TracingSupportExtensions
 
         return loggingBuilder;
     }
-    
+
     private static void HttpActivityEnrichment(Activity activity, string eventName, object rawObject)
     {
         if (eventName.Equals("OnStartActivity") && rawObject is HttpRequestMessage httpRequest)
@@ -117,8 +120,8 @@ public static class TracingSupportExtensions
 
     private static void AspNetCoreActivityEnrichment(Activity activity, string eventName, object rawObject)
     {
-        if((activity.GetTagItem("http.target") ?? "/") == "/")
-               activity.DisplayName="Home";
+        if ((activity.GetTagItem("http.target") ?? "/") == "/")
+            activity.DisplayName = "Home";
         else
             activity.DisplayName = activity.GetTagItem("http.target")?.ToString();
 
@@ -127,10 +130,10 @@ public static class TracingSupportExtensions
         {
             if (rawObject is HttpRequest httpRequest)
             {
-                if(httpRequest.Query.ContainsKey("fordays"))
+                if (httpRequest.Query.ContainsKey("fordays"))
                 {
                     activity.SetTag("data.ForDays", httpRequest.Query["fordays"].ToString());
-                }                
+                }
             }
         }
         else if (eventName.Equals("OnStopActivity"))
@@ -140,7 +143,7 @@ public static class TracingSupportExtensions
                 activity.SetTag("data.ResponseType", httpResponse.ContentType);
             }
         }
-        
+
         SetTraceId(activity);
     }
 
@@ -152,10 +155,11 @@ public static class TracingSupportExtensions
     }
 }
 
-internal class TelemetryConfiguration{
+internal class TelemetryConfiguration
+{
     public string? AppName { get; set; }
     public string? Exporter { get; set; }
-    public string? AssemblyVersion { get; set; } 
+    public string? AssemblyVersion { get; set; }
 
     public ResourceBuilder? ResourceBuilder { get; set; }
 
@@ -166,7 +170,7 @@ internal class TelemetryConfiguration{
         telemetryConfiguration.Exporter = configuration.GetValue<string>("TracingExporter").ToLowerInvariant();
         telemetryConfiguration.AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
         telemetryConfiguration.ResourceBuilder = ResourceBuilder.CreateDefault().AddService(telemetryConfiguration.AppName, serviceVersion: telemetryConfiguration.AssemblyVersion, serviceInstanceId: Environment.MachineName);
-        
+
         return telemetryConfiguration;
     }
 }

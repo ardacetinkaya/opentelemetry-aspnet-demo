@@ -77,4 +77,5 @@ services:
     - port: 5432
   volumes:
     - name: postgres-storage
+      source: ./db/
       target: /var/lib/postgresql/data
