@@ -334,3 +334,4 @@ ASALocalRun/
 .localhistory/
 .tye/process_store
 .tye/docker_store
+output/logs.json

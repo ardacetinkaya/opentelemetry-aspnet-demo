@@ -17,10 +17,30 @@ services:
       protocol: http
       port: 14268
       containerPort: 14268
-    - name: agent
+    - name: collector-endpoint-proto
+      protocol: http
+      port: 14250
+      containerPort: 14250
+    - name: agent-over-compact-thrift-protocol
       protocol: udp
       port: 6831
       containerPort: 6831
+    # - name: agent-over-binary-thrift-protocol
+    #   protocol: udp
+    #   port: 6832
+    #   containerPort: 6832
+- name: otel
+  image: otel/opentelemetry-collector:0.48.0
+  args: --config=/etc/otel-collector-config.yaml
+  bindings:
+    - name: grpc-receiver
+      port: 4317
+      containerPort: 4317
+  volumes:
+    - source: ./otel-collector-config.yaml
+      target: /etc/otel-collector-config.yaml
+    - source: ./output
+      target: /etc/output
 - name: ui
   project: SomeWebApp.UI/SomeWebApp.UI.csproj
   bindings:

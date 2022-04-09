@@ -39,6 +39,12 @@ public static class TracingSupportExtensions
                 case "jaeger":
                     options.AddJaegerExporter();
                     break;
+                case "otlp":
+                    options.AddOtlpExporter(otlpOptions =>
+                    {
+                        otlpOptions.Endpoint = new Uri(configuration.GetValue<string>("Otlp:Endpoint"));
+                    });
+                    break;
                 default:
                     options.AddConsoleExporter();
                     break;
