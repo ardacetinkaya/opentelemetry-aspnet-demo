@@ -7,6 +7,7 @@ using System.Reflection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace SomeWebApp.Common;
 public static class TracingSupportExtensions
@@ -22,16 +23,21 @@ public static class TracingSupportExtensions
         services.AddOpenTelemetryTracing((options) =>
         {
             options.SetResourceBuilder(resourceBuilder)
-            .AddHttpClientInstrumentation()
-            .AddAspNetCoreInstrumentation();
+                .AddHttpClientInstrumentation(options =>
+                {
+                    options.RecordException = true;
+                    options.Enrich = HttpActivityEnrichment;
+                })
+                .AddAspNetCoreInstrumentation(options =>
+                {
+                    options.RecordException = true;
+                    options.Enrich = AspNetCoreActivityEnrichment;
+                });
 
             switch (tracingExporter)
             {
                 case "jaeger":
                     options.AddJaegerExporter();
-                    services.Configure<JaegerExporterOptions>(configuration.GetSection("Jaeger"));
-                    // Customize the HttpClient that will be used when JaegerExporter is configured for HTTP transport.
-                    // builder.Services.AddHttpClient("JaegerExporter", configureClient: (client) => client.DefaultRequestHeaders.Add("X-MyCustomHeader", "value"));
                     break;
                 default:
                     options.AddConsoleExporter();
@@ -42,4 +48,49 @@ public static class TracingSupportExtensions
         return services;
     }
 
+    private static void HttpActivityEnrichment(Activity activity, string eventName, object rawObject)
+    {
+        if (eventName.Equals("OnStartActivity") && rawObject is HttpRequestMessage httpRequest)
+        {
+            var request = "EMPTY!";
+            if (httpRequest.Content != null)
+            {
+                request = httpRequest.Content.ReadAsStringAsync().Result;
+
+            }
+            activity.SetTag("http.request_content", request);
+
+        }
+
+        if (eventName.Equals("OnStopActivity") && rawObject is HttpResponseMessage httpResponse)
+        {
+            var response = "EMPTY!";
+            if (httpResponse.Content != null)
+            {
+                response = httpResponse.Content.ReadAsStringAsync().Result;
+            }
+
+            activity.SetTag("http.response_content", response);
+
+        }
+
+        if (eventName.Equals("OnException") && rawObject is Exception exception)
+        {
+            activity.SetTag("http.exception", exception.Message);
+        }
+
+        SetTraceId(activity);
+    }
+
+    private static void AspNetCoreActivityEnrichment(Activity activity, string eventName, object rawObject)
+    {
+        SetTraceId(activity);
+    }
+
+    private static void SetTraceId(Activity activity)
+    {
+        activity.AddTag("trc.TraceId", activity.TraceId.ToString());
+        activity.AddTag("trc.TraceSpanId", activity.SpanId.ToString());
+        activity.AddTag("trc.TraceParentSpanId", activity.Parent?.SpanId.ToString());
+    }
 }

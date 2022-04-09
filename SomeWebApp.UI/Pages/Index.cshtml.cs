@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
 namespace SomeWebApp.UI.Pages
@@ -12,7 +13,9 @@ namespace SomeWebApp.UI.Pages
         private readonly JsonSerializerOptions _options;
 
         public IEnumerable<WeatherForecast>? Forecasts { get; private set; }
-
+        public string Days { get; set; }
+        
+        private const string DEFAULT_DAY = "10";
         public IndexModel(ILogger<IndexModel> logger,IHttpClientFactory factory)
         {
             _logger = logger;
@@ -25,9 +28,17 @@ namespace SomeWebApp.UI.Pages
             };
         }
 
-        public async Task OnGet()
+        public async Task OnGet(string days)
         {
-            var httpResponseMessage = await _httpClient.GetAsync("/WeatherForecast");
+            Days = days ?? DEFAULT_DAY;
+            var query = new Dictionary<string, string>()
+            {
+                ["number"] = days ?? DEFAULT_DAY
+            };
+
+            var uri = QueryHelpers.AddQueryString("/WeatherForecast", query);
+
+            var httpResponseMessage = await _httpClient.GetAsync(uri);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var contentString = await httpResponseMessage.Content.ReadAsStringAsync();

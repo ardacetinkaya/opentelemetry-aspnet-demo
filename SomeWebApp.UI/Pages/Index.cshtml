@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{days=10}"
 @using System.Collections
 @model IndexModel
 @{
@@ -7,8 +7,15 @@
 
 
 <div class="row text-center">
-    <div class="col-md-12"><h4>Backend API Call</h4></div>
     <div class="col-md-12">
+        <h4>Weather forecast</h4>
+    </div>
+    <div class="col-md-12">
+        <div>
+            Days:@Model.Days
+        </div>
+
+        <input type="range" min="1" max="30" value='@RouteData.Values["days"]' onchange="changeDayCount(this.value)">
         <ul>
             @if (Model.Forecasts != null)
             {
@@ -26,3 +33,23 @@
     </div>
 </div>
 
+@section scripts{
+<script>
+    $(document).ready(function () {
+
+
+
+    });
+    function changeDayCount(count) {
+        $.ajax({
+            type: 'GET',
+            data: { days: count},
+            url: '@Url.Page("index")',
+            success: function (result) {
+                console.log(result);
+                window.location = count;
+            }
+    });
+    }
+</script>
+}
