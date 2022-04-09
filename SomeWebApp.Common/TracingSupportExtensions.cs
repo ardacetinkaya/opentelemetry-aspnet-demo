@@ -1,8 +1,6 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
-using System;
 using System.Reflection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
