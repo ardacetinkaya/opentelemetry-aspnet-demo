@@ -333,3 +333,4 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 .tye/process_store
+.tye/docker_store

@@ -1,7 +1,9 @@
 using SomeWebApp.UI;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Extensions.Hosting.Implementation;
+using OpenTelemetry.Resources;
+using System.Reflection;
+using OpenTelemetry.Exporter;
+using SomeWebApp.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,7 @@ builder.Services.AddTransient<HeaderValidator>();
 
 builder.Services.AddHttpClient("Main", httpClient =>
 {
-    var address = Environment.GetEnvironmentVariable("API_SERVICE_FQDN")?? "localhost";
+    var address = Environment.GetEnvironmentVariable("API_SERVICE_FQDN") ?? "localhost";
     httpClient.BaseAddress = new Uri($"https://{address}");
 
 }).AddHttpMessageHandler<HeaderValidator>();
@@ -18,10 +20,8 @@ builder.Services.AddHttpClient("Main", httpClient =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services
-    .AddOpenTelemetryTracing((builder) => builder
-    .AddAspNetCoreInstrumentation()
-    .AddJaegerExporter());
+builder.Services.AddTracingSupport(builder.Configuration);
+
 
 var app = builder.Build();
 

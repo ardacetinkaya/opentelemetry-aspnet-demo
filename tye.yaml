@@ -6,6 +6,21 @@
 #
 name: somewebapp
 services:
+- name: jaeger
+  image: jaegertracing/all-in-one
+  bindings:
+    - name: ui
+      protocol: http
+      port: 16686
+      containerPort: 16686
+    - name: collector-endpoint
+      protocol: http
+      port: 14268
+      containerPort: 14268
+    - name: agent
+      protocol: udp
+      port: 6831
+      containerPort: 6831
 - name: ui
   project: SomeWebApp.UI/SomeWebApp.UI.csproj
   bindings:

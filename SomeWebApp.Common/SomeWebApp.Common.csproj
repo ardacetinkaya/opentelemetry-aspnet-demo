@@ -1,16 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>5da0acae-b237-4aa0-aaf1-219f4817a42a</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="OpenTelemetry" Version="1.2.0-rc4" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.2.0-rc4" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.1.0" />
@@ -18,10 +15,6 @@
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SomeWebApp.Common\SomeWebApp.Common.csproj" />
   </ItemGroup>
 
 </Project>
