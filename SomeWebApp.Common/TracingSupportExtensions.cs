@@ -15,15 +15,11 @@ public static class TracingSupportExtensions
 {
     public static IServiceCollection AddTracingSupport(this IServiceCollection services, IConfiguration configuration)
     {
-        var tracingExporter = configuration.GetValue<string>("TracingExporter").ToLowerInvariant();
-        var appName = configuration.GetValue<string>("AppName").ToLowerInvariant();
-        var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
-        var resourceBuilder = ResourceBuilder.CreateDefault().AddService(appName, serviceVersion: assemblyVersion, serviceInstanceId: Environment.MachineName);
-
+        var telemetryConfiguration = TelemetryConfiguration.Init(configuration);
 
         services.AddOpenTelemetryTracing((options) =>
         {
-            options.SetResourceBuilder(resourceBuilder)
+            options.SetResourceBuilder(telemetryConfiguration.ResourceBuilder)
                 .AddHttpClientInstrumentation(options =>
                 {
                     options.RecordException = true;
@@ -35,7 +31,7 @@ public static class TracingSupportExtensions
                     options.Enrich = AspNetCoreActivityEnrichment;
                 });
 
-            switch (tracingExporter)
+            switch (telemetryConfiguration.Exporter)
             {
                 case "jaeger":
                     options.AddJaegerExporter();
@@ -52,17 +48,13 @@ public static class TracingSupportExtensions
             }
         });
         
-
         return services;
     }
 
 
     public static ILoggingBuilder AddLoggingSupport(this ILoggingBuilder loggingBuilder, IConfiguration configuration)
     {
-        var tracingExporter = configuration.GetValue<string>("TracingExporter").ToLowerInvariant();
-        var appName = configuration.GetValue<string>("AppName").ToLowerInvariant();
-        var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
-        var resourceBuilder = ResourceBuilder.CreateDefault().AddService(appName, serviceVersion: assemblyVersion, serviceInstanceId: Environment.MachineName);
+        var telemetryConfiguration = TelemetryConfiguration.Init(configuration);
 
         loggingBuilder.AddOpenTelemetry(options =>
         {
@@ -71,7 +63,7 @@ public static class TracingSupportExtensions
             options.ParseStateValues = true;
             
 
-            switch (tracingExporter)
+            switch (telemetryConfiguration.Exporter)
             {
                 case "otlp":
                     options.AddOtlpExporter(otlpOptions =>
@@ -88,6 +80,7 @@ public static class TracingSupportExtensions
 
         return loggingBuilder;
     }
+    
     private static void HttpActivityEnrichment(Activity activity, string eventName, object rawObject)
     {
         if (eventName.Equals("OnStartActivity") && rawObject is HttpRequestMessage httpRequest)
@@ -156,5 +149,24 @@ public static class TracingSupportExtensions
         activity.AddTag("trc.TraceId", activity.TraceId.ToString());
         activity.AddTag("trc.TraceSpanId", activity.SpanId.ToString());
         activity.AddTag("trc.TraceParentSpanId", activity.Parent?.SpanId.ToString());
+    }
+}
+
+internal class TelemetryConfiguration{
+    public string? AppName { get; set; }
+    public string? Exporter { get; set; }
+    public string? AssemblyVersion { get; set; } 
+
+    public ResourceBuilder? ResourceBuilder { get; set; }
+
+    public static TelemetryConfiguration Init(IConfiguration configuration)
+    {
+        var telemetryConfiguration = new TelemetryConfiguration();
+        telemetryConfiguration.AppName = configuration.GetValue<string>("AppName").ToLowerInvariant();
+        telemetryConfiguration.Exporter = configuration.GetValue<string>("TracingExporter").ToLowerInvariant();
+        telemetryConfiguration.AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
+        telemetryConfiguration.ResourceBuilder = ResourceBuilder.CreateDefault().AddService(telemetryConfiguration.AppName, serviceVersion: telemetryConfiguration.AssemblyVersion, serviceInstanceId: Environment.MachineName);
+        
+        return telemetryConfiguration;
     }
 }
