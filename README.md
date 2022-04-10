@@ -1,2 +1,3 @@
-# SomeWebApp
- 
+# OpenTelemetry demonstration with ASP.NET Core
+
+Soon...
