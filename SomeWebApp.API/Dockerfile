@@ -11,7 +11,7 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /src
-COPY ["SomeWebApp.Common/SomeWebApp.Common.csproj", "SomeWebApp.Common/"]
+COPY ["SomeWebApp.Telemetry/SomeWebApp.Telemetry.csproj", "SomeWebApp.Telemetry/"]
 COPY ["SomeWebApp.API/SomeWebApp.API.csproj", "SomeWebApp.API/"]
 RUN dotnet restore "SomeWebApp.API/SomeWebApp.API.csproj"
 COPY . .
