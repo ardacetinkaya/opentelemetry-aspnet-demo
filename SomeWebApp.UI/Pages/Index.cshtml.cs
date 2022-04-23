@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
@@ -37,6 +38,10 @@ namespace SomeWebApp.UI.Pages
 
             var uri = QueryHelpers.AddQueryString("/WeatherForecast", query);
 
+            //Some custom ID for this request as baggage
+            var activityFeature = HttpContext.Features.Get<IHttpActivityFeature>();
+            activityFeature?.Activity.AddBaggage("RequestId", Guid.NewGuid().ToString());
+            
             var httpResponseMessage = await _httpClient.GetAsync(uri);
             if (httpResponseMessage.IsSuccessStatusCode)
             {

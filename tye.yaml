@@ -5,6 +5,9 @@
 #    https://aka.ms/AA7q20u
 #
 name: somewebapp
+extensions:
+- name: seq
+  logPath: ./.logs
 services:
 - name: jaeger
   image: jaegertracing/all-in-one
@@ -74,7 +77,9 @@ services:
     - name: POSTGRES_DB
       value: postgres
   bindings:
-    - port: 5432
+    - name: connectionstring
+      port: 5432
+      connectionString: Server=${host};Port=${port};User Id=postgres;Password=${env:POSTGRES_PASSWORD};
   volumes:
     - name: postgres-storage
       source: ./db/

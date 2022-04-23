@@ -336,3 +336,4 @@ ASALocalRun/
 .tye/docker_store
 output/logs.json
 db/
+.logs/

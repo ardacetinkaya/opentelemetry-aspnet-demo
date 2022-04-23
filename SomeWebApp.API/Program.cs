@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ForecastContext>(options =>{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ForecastContext")
+    options.UseNpgsql(builder.Configuration.GetConnectionString(name: "database", binding: "connectionstring")
     ,options => options.SetPostgresVersion(new Version(9, 6)));
 });
 
