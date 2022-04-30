@@ -8,8 +8,8 @@ builder.Services.AddTransient<HeaderValidator>();
 
 builder.Services.AddHttpClient("Main", httpClient =>
 {
-    var address = Environment.GetEnvironmentVariable("API_SERVICE_FQDN") ?? "localhost";
-    httpClient.BaseAddress = new Uri($"https://{address}");
+    var uri = builder.Configuration.GetServiceUri(name:"api",binding:"http");
+    httpClient.BaseAddress = uri;
 
 }).AddHttpMessageHandler<HeaderValidator>();
 
